@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">jetpack-compose-games-app</string>
+    <string name="title_activity_game_list_screen">GameListScreen</string>
+</resources>
