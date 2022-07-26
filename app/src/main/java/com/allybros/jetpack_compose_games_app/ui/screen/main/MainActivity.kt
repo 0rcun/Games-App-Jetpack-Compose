@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.allybros.jetpack_compose_games_app.entity.common.AppConstants
+import com.allybros.jetpack_compose_games_app.ui.screen.detail.GameDetailScreen
 import com.allybros.jetpack_compose_games_app.ui.screen.list.GameListScreen
 import com.allybros.jetpack_compose_games_app.ui.theme.JetpackcomposegamesappTheme
 import kotlinx.coroutines.Dispatchers
@@ -51,11 +52,11 @@ private fun MainScreen(){
     }
     NavHost(navController = navController, startDestination = AppConstants.GAME_LIST) {
         composable(AppConstants.GAME_LIST) { GameListScreen(navController) }
-//        composable(AppConstants.GAME_DETAIL_WITH_ARGUMENTS ,
-//            arguments = listOf(
-//                navArgument("id") { type = NavType.StringType })
-//        ) { backStackEntry ->
-//            GameDetailScreen(backStackEntry.arguments?.getString("id").toString())
-//        }
+        composable(AppConstants.GAME_DETAIL_WITH_ARGUMENTS ,
+            arguments = listOf(
+                navArgument("id") { type = NavType.StringType })
+        ) { backStackEntry ->
+            GameDetailScreen(backStackEntry.arguments?.getString("id").toString())
+        }
     }
 }

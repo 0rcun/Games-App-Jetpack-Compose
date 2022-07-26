@@ -25,7 +25,6 @@ class GameListViewModel(
 
 
     private var _gameListLiveData = MutableStateFlow(GameListResponse())
-
     val responseLiveData: StateFlow<GameListResponse> get() = _gameListLiveData
 
     var next = ""
