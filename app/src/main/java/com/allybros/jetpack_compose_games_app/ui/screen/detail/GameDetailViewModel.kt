@@ -1,10 +1,8 @@
 package com.allybros.jetpack_compose_games_app.ui.screen.detail
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.allybros.jetpack_compose_games_app.entity.detail.GamesDetailResponse
-import com.allybros.jetpack_compose_games_app.entity.list.GameListResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

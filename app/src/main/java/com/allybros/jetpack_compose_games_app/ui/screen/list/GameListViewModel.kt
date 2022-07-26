@@ -1,18 +1,13 @@
 package com.allybros.jetpack_compose_games_app.ui.screen.list
 
-import android.graphics.pdf.PdfDocument
-import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.allybros.jetpack_compose_games_app.entity.common.PageType
 import com.allybros.jetpack_compose_games_app.entity.list.GameListResponse
-import com.allybros.jetpack_compose_games_app.entity.list.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
-import kotlin.reflect.typeOf
 
 
 /**
