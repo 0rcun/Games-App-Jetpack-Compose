@@ -1,13 +1,18 @@
 package com.allybros.jetpack_compose_games_app.ui.screen.list
 
+import android.graphics.pdf.PdfDocument
+import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.allybros.jetpack_compose_games_app.entity.common.PageType
 import com.allybros.jetpack_compose_games_app.entity.list.GameListResponse
 import com.allybros.jetpack_compose_games_app.entity.list.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+import kotlin.reflect.typeOf
 
 
 /**
@@ -19,14 +24,16 @@ class GameListViewModel(
 ) : ViewModel(), KoinComponent {
 
 
-    private var _gameListLiveData = MutableStateFlow<List<Result>>(listOf())
-    val gameListLiveData: StateFlow<List<Result>> get() = _gameListLiveData
+    private var _gameListLiveData = MutableStateFlow(GameListResponse())
 
+    val responseLiveData: StateFlow<GameListResponse> get() = _gameListLiveData
+
+    var next = ""
+    var previous = ""
 
     init {
         viewModelScope.launch {
-            if (gameListLiveData.value.isEmpty())
-                getGameList()
+            getGameList()
         }
     }
 
@@ -38,10 +45,44 @@ class GameListViewModel(
             gameListRepository.pageSize = pageSize
         }
 
-        viewModelScope.launch{
+        viewModelScope.launch {
             gameListRepository.getGameList.collect {
                 if (it != null) {
                     _gameListLiveData.value = it
+                    setPageLinks(it)
+                }
+            }
+        }
+    }
+
+    private fun setPageLinks(it: GameListResponse) {
+        if(!it.next.isNullOrBlank()){
+            next = it.next
+        }
+        if(!it.previous.isNullOrBlank()){
+            previous = it.previous
+        }
+    }
+
+    fun getGamePage(type: PageType){
+        when(type){
+            PageType.NEXT->{
+                gameListRepository.url = next
+            }
+            PageType.PREVIOUS->{
+                gameListRepository.url = previous
+            }
+        }
+
+        viewModelScope.launch {
+            gameListRepository.getGameListPage.collect {
+                it?.results?.toList()?.let { it1 ->
+                    it.results.addAll(_gameListLiveData.value.results!!)
+                    it.results.sortBy { it.released }
+                    _gameListLiveData.value = it
+                }
+                if (it != null) {
+                    setPageLinks(it)
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.allybros.jetpack_compose_games_app.ui.screen.list
 
+import android.util.Log
 import com.allybros.jetpack_compose_games_app.network.ApiFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
@@ -13,11 +14,16 @@ import kotlinx.coroutines.flow.flowOn
 class GameListRepository(private val apiFactory: ApiFactory) {
     var pageSize = 10
     var page = 1
+    var url = ""
 
     val getGameList = flow {
         val gameListResponse = apiFactory.getGameList(page = page, pageSize = pageSize)
+        emit(gameListResponse.body())
+    }.flowOn(Dispatchers.IO)
 
-        emit(gameListResponse.body()?.results)
+    val getGameListPage = flow {
+        val gameListResponse = apiFactory.getGameList(url)
+        emit(gameListResponse.body())
 
     }.flowOn(Dispatchers.IO)
 }

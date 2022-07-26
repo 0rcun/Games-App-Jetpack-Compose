@@ -2,28 +2,26 @@ package com.allybros.jetpack_compose_games_app.ui.screen.list
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.allybros.jetpack_compose_games_app.entity.common.AppConstants
+import com.allybros.jetpack_compose_games_app.entity.common.PageType
 import com.allybros.jetpack_compose_games_app.entity.list.Result
 import com.allybros.jetpack_compose_games_app.ui.theme.*
 import org.koin.androidx.compose.getViewModel
@@ -43,21 +41,68 @@ fun ProductList(
     navController: NavController,
     viewModel: GameListViewModel = getViewModel()
 ) {
-    val gameListState by viewModel.gameListLiveData.collectAsState()
+    val gameListState by viewModel.responseLiveData.collectAsState()
 
-    Scaffold {
-        GameList(gameList = gameListState, navController = navController)
+    gameListState.results?.let { list->
+        Scaffold {
+            GameList(
+                gameList = list,
+                navController = navController,
+                viewModel = viewModel
+            )
+        }
     }
 }
 
 @Composable
-private fun GameList(gameList: List<Result>, navController: NavController) {
-    LazyColumn{
+private fun GameList(
+    gameList: List<Result>,
+    navController: NavController,
+    viewModel: GameListViewModel
+) {
+    val listState = rememberLazyListState()
+    LazyColumn(state = listState){
         items(gameList){
             GameListItem(it, navController)
         }
     }
+    // call the extension function
+    listState.OnBottomReached {
+        // do on load more
+        viewModel.getGamePage(PageType.NEXT)
+    }
 }
+
+@Composable
+fun LazyListState.OnBottomReached(
+    loadMore : () -> Unit
+){
+    // state object which tells us if we should load more
+    val shouldLoadMore = remember {
+        derivedStateOf {
+
+            // get last visible item
+            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
+                ?:
+                // list is empty
+                // return false here if loadMore should not be invoked if the list is empty
+                return@derivedStateOf true
+
+            // Check if last visible item is the last item in the list
+            lastVisibleItem.index == layoutInfo.totalItemsCount - 1
+        }
+    }
+
+    // Convert the state into a cold flow and collect
+    LaunchedEffect(shouldLoadMore){
+        snapshotFlow { shouldLoadMore.value }
+            .collect {
+                // if should load more, then invoke loadMore
+                if (it) loadMore()
+            }
+    }
+}
+
 
 @Composable
 private fun GameListItem(item: Result, navController: NavController) {
@@ -105,7 +150,8 @@ fun onGameClicked(item: Result, navController: NavController) {
         AppConstants.GAME_DETAIL_WITH_ARGUMENTS.replace(
             "{id}",
             item.id.toString()
-        ))
+        )
+    )
 }
 
 @Preview(showBackground = true)

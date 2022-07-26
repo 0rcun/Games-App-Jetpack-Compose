@@ -7,6 +7,7 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface ApiFactory {
 
@@ -22,5 +23,8 @@ interface ApiFactory {
         @Query("page") page : Int,
         @Query("key") key : String? = API_KEY
     ) : Response<GameListResponse>
+
+    @GET
+    suspend fun getGameList(@Url link: String) : Response<GameListResponse>
 
 }
