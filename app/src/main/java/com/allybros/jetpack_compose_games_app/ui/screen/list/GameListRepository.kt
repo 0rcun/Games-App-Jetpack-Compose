@@ -1,12 +1,9 @@
 package com.allybros.jetpack_compose_games_app.ui.screen.list
 
-import android.util.Log
-import com.allybros.jetpack_compose_games_app.entity.detail.GamesDetailResponse
 import com.allybros.jetpack_compose_games_app.network.ApiFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import retrofit2.Call
 
 
 /**

@@ -26,7 +26,7 @@ class GameListViewModel(
     init {
         viewModelScope.launch {
             if (gameListLiveData.value.isEmpty())
-                getGameList(2,100)
+                getGameList()
         }
     }
 
