@@ -3,7 +3,7 @@
 It's a demo games listing app created with Modern Android development approaches. This project is similar with [Games App](https://github.com/0rcun/GamesApp).
 
 
-##Tech Stack
+## Tech Stack
 - Kotlin with coroutines and Flow for asynchronous.
 - Koin
 - JetPack
